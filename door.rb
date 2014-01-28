@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'yaml'
 
 config = YAML.load_file("secret.yml")
 
