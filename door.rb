@@ -1,9 +1,11 @@
 require 'sinatra'
 
+config = YAML.load_file("secret.yml")
+
 post '/unlock' do
-  if params[:token] == ENV["TOKEN"]
-    `wemo -f switch "#{ENV["WEMO"]}" on`
+  if params['token'] == config["token"]
+    `wemo -f switch "#{config["wemo"]}" on`
     sleep 1
-    `wemo -f switch "#{ENV["WEMO"]}" off`
+    `wemo -f switch "#{config["wemo"]}" off`
   end
 end
