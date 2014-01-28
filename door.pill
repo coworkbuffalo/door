@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+PATH = "/Users/qrush/Apps/door"
+
+Bluepill.application("coworkbuffalo") do |app|
+  app.process("door") do |process|
+    process.start_command = "/Users/qrush/.rvm/bin/door_bundle exec rackup -D -s webrick -p 80 -P #{PATH}/door.pid"
+    process.working_dir = PATH
+    process.pid_file = "#{PATH}/door.pid"
+    process.stdout = process.stderr = "#{PATH}/door.log"
+  end
+end
