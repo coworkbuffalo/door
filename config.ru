@@ -1,3 +1,3 @@
 require './door'
 
-run Sinatra::Application
+run Door
