@@ -1,11 +1,11 @@
 RAILS_ROOT = "/Users/qrush/Apps/door"
 
-Bluepill.application("door") do |app|
+Bluepill.application("door", :log_file => File.join(RAILS_ROOT, 'log', 'bluepill.log')) do |app|
   app.process("unicorn") do |process|
     process.pid_file = File.join(RAILS_ROOT, 'tmp', 'pids', 'unicorn.pid')
     process.working_dir = RAILS_ROOT
 
-    process.start_command = "/Users/qrush/.rvm/bin/door_bundle exec unicorn -Dc config/unicorn.rb -E production"
+    process.start_command = "/Users/qrush/.rvm/bin/door_bundle exec unicorn -Dc config/unicorn.rb -E production -l 80"
     process.stop_command = "kill -QUIT {{PID}}"
     process.restart_command = "kill -USR2 {{PID}}"
 
