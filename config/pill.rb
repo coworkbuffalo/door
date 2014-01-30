@@ -13,6 +13,8 @@ Bluepill.application("door", :log_file => File.join(RAILS_ROOT, 'log', 'bluepill
     process.stop_grace_time = 5.seconds
     process.restart_grace_time = 13.seconds
 
+    process.checks :running_time, :every => 10.minutes, :below => 30.minutes
+
     process.monitor_children do |child_process|
       child_process.stop_command = "kill -QUIT {{PID}}"
 

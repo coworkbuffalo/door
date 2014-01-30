@@ -1,24 +1,23 @@
 # config/unicorn.rb
-worker_processes Integer(ENV["WEB_CONCURRENCY"] || 3)
+worker_processes 3
 timeout 15
 preload_app true
-pid "tmp/pids/unicorn.pid"
+
+pid_path = "tmp/pids/unicorn.pid"
+pid pid_path
 
 before_fork do |server, worker|
-  Signal.trap 'TERM' do
-    puts 'Unicorn master intercepting TERM and sending myself QUIT instead'
-    Process.kill 'QUIT', Process.pid
+  ActiveRecord::Base.connection.disconnect!
+  old_pid_path = "#{pid_path}.oldbin"
+  if File.exists?(old_pid_path) && server.pid != old_pid_path
+    begin
+      Process.kill("QUIT", File.read(old_pid_path).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+      # someone else did our job for us
+    end
   end
-
-  defined?(ActiveRecord::Base) and
-    ActiveRecord::Base.connection.disconnect!
 end
 
 after_fork do |server, worker|
-  Signal.trap 'TERM' do
-    puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to send QUIT'
-  end
-
-  defined?(ActiveRecord::Base) and
-    ActiveRecord::Base.establish_connection
+  ActiveRecord::Base.establish_connection
 end
